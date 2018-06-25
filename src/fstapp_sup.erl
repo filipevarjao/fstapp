@@ -28,8 +28,14 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+	ChildSpec = child(fstapp_server),
+	{ok,{{one_for_all, 2, 3600}, [ChildSpec]}}.
+%    {ok, { {one_for_all, 0, 1}, []}}.
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
+child(Module) ->
+	{Module, {Module, start_link, []},
+	 permanent, 2000, worker, [Module]}.
