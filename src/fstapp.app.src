@@ -5,7 +5,9 @@
   {mod, { fstapp_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    sasl,
+    os_mon
    ]},
   {env,[]},
   {modules, []},
