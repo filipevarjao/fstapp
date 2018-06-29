@@ -11,19 +11,17 @@ start_link() ->
 	gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 init([]) ->
-	TimerRef = erlang:send_after(5000, self(), collect_metrics),
+	TimerRef = erlang:send_after(15000, self(), collect_metrics),
 	{ok, #state{timer_ref=TimerRef}}.
 
 handle_call(start_collecting_metrics, _From, State) ->
-	TimerRef = erlang:send_after(5000, self(), collect_metrics),
+	erlang:cancel_timer(State#state.timer_ref),
+	TimerRef = erlang:send_after(15000, self(), collect_metrics),
 	Reply = ok,
 	{reply, ok, #state{timer_ref=TimerRef}};
 handle_call(stop_collecting_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
-	{reply, ok, State};
-handle_call(_Request, _From, State) ->
-	Reply = ok,
-	{reply, Reply, State}.
+	{reply, ok, State}.
 
 handle_cast(_Msg, State) ->
 	{noreply, State}.
@@ -33,7 +31,7 @@ handle_info(collect_metrics, _State) ->
 	{Total, Alloc, _} = memsup:get_memory_data(),
 	io:format("Number of processes running on this machine: ~p~n", [ProcessCount]),
 	io:format("Using ~p of memory from a total of ~p ~n", [Alloc, Total]),
-	TimerRef = erlang:send_after(5000, self(), collect_metrics),
+	TimerRef = erlang:send_after(15000, self(), collect_metrics),
 	{noreply, #state{timer_ref=TimerRef}};
 handle_info(_, State) ->
 	{noreply, State}.
