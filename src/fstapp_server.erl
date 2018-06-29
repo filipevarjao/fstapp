@@ -14,11 +14,14 @@ init([]) ->
 	TimerRef = erlang:send_after(5000, self(), collect_metrics),
 	{ok, #state{timer_ref=TimerRef}}.
 
+handle_call(start_collecting_metrics, _From, State) ->
+	TimerRef = erlang:send_after(5000, self(), collect_metrics),
+	Reply = ok,
+	{reply, ok, #state{timer_ref=TimerRef}};
 handle_call(stop_collecting_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	{reply, ok, State};
 handle_call(_Request, _From, State) ->
-	erlang:send_after(5000, self(), collect_metrics),
 	Reply = ok,
 	{reply, Reply, State}.
 
