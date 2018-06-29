@@ -5,7 +5,10 @@ start_metrics() ->
 	fstapp_server:start_get_metr().
 
 change_frequency(Time) ->
-	fstapp_server:change_freq_metr(Time).
+	case is_integer(Time) of
+		true -> fstapp_server:change_freq_metr(Time);
+		false -> io:format("You must pass an integer as argument.~n")
+	end.
 
 stop_metrics() ->
 	fstapp_server:stop_get_metr().
