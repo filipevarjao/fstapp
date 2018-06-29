@@ -36,7 +36,7 @@ handle_info(collect_metrics, State) ->
 	io:format("Number of processes running on this machine: ~p~n", [ProcessCount]),
 	io:format("Using ~p of memory from a total of ~p ~n", [Alloc, Total]),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
-	{noreply, #state{timer_ref=TimerRef, freq=State#state.freq}};
+	{noreply, State#state{timer_ref=TimerRef}};
 handle_info(_, State) ->
 	{noreply, State}.
 
