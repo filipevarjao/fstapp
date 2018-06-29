@@ -14,18 +14,17 @@ init([]) ->
 	TimerRef = erlang:send_after(5000, self(), collect_metrics),
 	{ok, #state{timer_ref=TimerRef}}.
 
+handle_call(stop_collecting_metrics, _From, State) ->
+	erlang:cancel_timer(State#state.timer_ref),
+	{reply, ok, State};
 handle_call(_Request, _From, State) ->
 	Reply = ok,
 	{reply, Reply, State}.
 
-handle_cast(stop, State) ->
-	erlang:cancel_timer(State#state.timer_ref),
-	{noreply, State};
 handle_cast(_Msg, State) ->
 	{noreply, State}.
 
-handle_info(collect_metrics, State) ->
-	io:format("~p~n", [State#state.timer_ref]),
+handle_info(collect_metrics, _State) ->
 	ProcessCount = cpu_sup:nprocs(),
 	{Total, Alloc, _} = memsup:get_memory_data(),
 	io:format("Number of processes running on this machine: ~p~n", [ProcessCount]),
@@ -39,4 +38,4 @@ terminate(_Reason, _State) ->
 	ok.
 
 stop_get_metr() ->
-	gen_server:cast(?MODULE, stop).
+	gen_server:call(?MODULE, stop_collecting_metrics).
