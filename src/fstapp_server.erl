@@ -1,25 +1,43 @@
 -module(fstapp_server).
 -behaviour(gen_server).
 
--export([start_link/0, start_get_metr/0, change_freq_metr/1, stop_get_metr/0]).
+-export([start_link/0, start_get_metrics/0, change_freq_metrics/1, stop_get_metrics/0]).
+
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
 
 -record(state, {timer_ref, freq}).
 
+%% ------
+%% API
+%% ------
+
 start_link() ->
 	gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+start_get_metrics() ->
+	gen_server:call(?MODULE, start_get_metrics).
+
+change_freq_metrics(Time) ->
+	gen_server:call(?MODULE, {change_freq_metrics, Time}).
+
+stop_get_metrics() ->
+	gen_server:call(?MODULE, stop_collecting_metrics).
+
+%% ------
+%% gen_server callbacks
+%% ------
 
 init([]) ->
 	TimerRef = erlang:send_after(5000, self(), collect_metrics),
 	{ok, #state{timer_ref=TimerRef, freq=5000}}.
 
-handle_call(start_collecting_metrics, _From, State) ->
+handle_call(start_get_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	Reply = ok,
 	{reply, ok, #state{timer_ref=TimerRef, freq=State#state.freq}};
-handle_call({update_freq_metrics, Time}, _From, State) ->
+handle_call({change_freq_metrics, Time}, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(Time*1000, self(), collect_metrics),
 	{reply, ok, #state{timer_ref=State#state.timer_ref, freq=Time*1000}};
@@ -35,6 +53,7 @@ handle_info(collect_metrics, State) ->
 	{Total, Alloc, _} = memsup:get_memory_data(),
 	io:format("Number of processes running on this machine: ~p~n", [ProcessCount]),
 	io:format("Using ~p of memory from a total of ~p ~n", [Alloc, Total]),
+	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	{noreply, State#state{timer_ref=TimerRef}};
 handle_info(_, State) ->
@@ -43,11 +62,3 @@ handle_info(_, State) ->
 terminate(_Reason, _State) ->
 	ok.
 
-start_get_metr() ->
-	gen_server:call(?MODULE, start_collecting_metrics).
-
-change_freq_metr(Time) ->
-	gen_server:call(?MODULE,{ update_freq_metrics, Time}).
-
-stop_get_metr() ->
-	gen_server:call(?MODULE, stop_collecting_metrics).
