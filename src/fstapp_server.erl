@@ -58,15 +58,23 @@ terminate(_Reason, _State) ->
 	ok.
 
 metrics(State) ->
+	{_, OsType} = os:type(),
 	ProcessCount = cpu_sup:nprocs(),
 	CpuUtil = cpu_sup:util(),
 	{Total, Alloc, _} = memsup:get_memory_data(),
 	MemDataList = memsup:get_system_memory_data(),
 	DiskUsed = disksup:get_almost_full_threshold(),
+	io:format("Operating System ~p~n", [OsType]),
 	io:format("CPU utilization ~p%~n", [CpuUtil]),
 	io:format("Percentage of disk space utilization ~p%~n", [DiskUsed]),
 	io:format("Number of processes running on this machine: ~p~n", [ProcessCount]),
 	io:format("Using ~p of memory from a total of ~p ~n", [Alloc, Total]),
+	printData(MemDataList),
 	erlang:cancel_timer(State#state.timer_ref),
 	erlang:send_after(State#state.freq, self(), collect_metrics).
 
+printData([]) -> [];
+printData([H|T]) ->
+	{Tag, Size} = H,
+	io:format("~p total of memory for ~p~n", [Size, Tag]),
+	printData(T).
