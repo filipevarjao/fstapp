@@ -7,32 +7,39 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
 
+%% state
 -record(state, {timer_ref, freq}).
 
-%% ------
-%% API
-%% ------
+
+%%%====================================================================
+%% API functioncs
+%%=====================================================================
 
 start_link() ->
 	gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
+-spec start_get_metrics() -> term().
 start_get_metrics() ->
 	gen_server:call(?MODULE, start_get_metrics).
 
+-spec change_freq_metrics(number()) -> term().
 change_freq_metrics(Time) ->
 	gen_server:call(?MODULE, {change_freq_metrics, Time}).
 
+-spec stop_get_metrics() -> term().
 stop_get_metrics() ->
 	gen_server:call(?MODULE, stop_collecting_metrics).
 
-%% ------
-%% gen_server callbacks
-%% ------
+%%%====================================================================
+%% gen_server functioncs
+%%=====================================================================
 
+%% @hidden
 init([]) ->
 	TimerRef = erlang:send_after(5000, self(), collect_metrics),
 	{ok, #state{timer_ref=TimerRef, freq=5000}}.
 
+%% @hidden
 handle_call(start_get_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
@@ -45,18 +52,26 @@ handle_call(stop_collecting_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	{reply, ok, State}.
 
+%% @hidden
 handle_cast(_Msg, State) ->
 	{noreply, State}.
 
+%% @hidden
 handle_info(collect_metrics, State) ->
 	TimerRef = metrics(State),
 	{noreply, State#state{timer_ref=TimerRef}};
 handle_info(_, State) ->
 	{noreply, State}.
 
+%% @hidden
 terminate(_Reason, _State) ->
 	ok.
 
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
+%% @private
 metrics(State) ->
 	{_, OsType} = os:type(),
 	ProcessCount = cpu_sup:nprocs(),
@@ -73,6 +88,7 @@ metrics(State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	erlang:send_after(State#state.freq, self(), collect_metrics).
 
+%% @private
 printData([]) -> [];
 printData([H|T]) ->
 	{Tag, Size} = H,
