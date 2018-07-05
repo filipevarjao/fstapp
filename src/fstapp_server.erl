@@ -1,8 +1,7 @@
 -module(fstapp_server).
 -behaviour(gen_server).
 
--export([start_link/0, start_get_metrics/0, change_freq_metrics/1, stop_get_metrics/0,
-	 metrics/0]).
+-export([start_link/0, start_get_metrics/0, change_freq_metrics/1, stop_get_metrics/0]).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
@@ -73,6 +72,7 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 %% @private
+-spec metrics() -> ok.
 metrics() ->
 	{_, OsType} = os:type(),
 	ProcessCount = cpu_sup:nprocs(),
@@ -82,6 +82,7 @@ metrics() ->
 	print_data([{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList).
 
 %% @private
+-spec print_data([tuple()]) -> ok.
 print_data([]) -> ok;
 print_data([H|T]) ->
 	case H of
