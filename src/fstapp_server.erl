@@ -7,9 +7,7 @@
 	terminate/2]).
 
 %% state
--record(state, {timer_ref :: reference() , freq :: non_neg_integer()}).
-
--type state() :: #state{}.
+-record(state, {timer_ref :: reference() , freq :: pos_integer()}).
 
 %%%====================================================================
 %% API functioncs
@@ -18,15 +16,15 @@
 start_link() ->
 	gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
--spec start_get_metrics() -> {reply, ok, state()}.
+-spec start_get_metrics() -> ok.
 start_get_metrics() ->
 	gen_server:call(?MODULE, start_get_metrics).
 
--spec change_freq_metrics(number()) -> {reply, ok, state()}.
+-spec change_freq_metrics(number()) -> ok.
 change_freq_metrics(Time) ->
 	gen_server:call(?MODULE, {change_freq_metrics, Time}).
 
--spec stop_get_metrics() -> {reply, ok, state()}.
+-spec stop_get_metrics() -> ok.
 stop_get_metrics() ->
 	gen_server:call(?MODULE, stop_collecting_metrics).
 
