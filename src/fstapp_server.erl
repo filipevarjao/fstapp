@@ -7,8 +7,9 @@
 	terminate/2]).
 
 %% state
--record(state, {timer_ref, freq}).
+-record(state, {timer_ref :: reference() , freq :: non_neg_integer()}).
 
+-type state() :: #state{}.
 
 %%%====================================================================
 %% API functioncs
@@ -17,15 +18,15 @@
 start_link() ->
 	gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
--spec start_get_metrics() -> term().
+-spec start_get_metrics() -> {reply, ok, state()}.
 start_get_metrics() ->
 	gen_server:call(?MODULE, start_get_metrics).
 
--spec change_freq_metrics(number()) -> term().
+-spec change_freq_metrics(number()) -> {reply, ok, state()}.
 change_freq_metrics(Time) ->
 	gen_server:call(?MODULE, {change_freq_metrics, Time}).
 
--spec stop_get_metrics() -> term().
+-spec stop_get_metrics() -> {reply, ok, state()}.
 stop_get_metrics() ->
 	gen_server:call(?MODULE, stop_collecting_metrics).
 
@@ -56,7 +57,7 @@ handle_cast(_Msg, State) ->
 
 %% @hidden
 handle_info(collect_metrics, State) ->
-	metrics(),
+	ok = metrics(),
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	{noreply, State#state{timer_ref=TimerRef}};
