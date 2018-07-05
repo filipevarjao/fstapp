@@ -1,7 +1,7 @@
 -module(fstapp_server).
 -behaviour(gen_server).
 
--export([start_link/0, start_get_metrics/0, change_freq_metrics/1, stop_get_metrics/0]).
+-export([start_link/0, start_get_metrics/0, change_freq_metrics/1, stop_get_metrics/0, get_frequency/0]).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
@@ -28,6 +28,10 @@ change_freq_metrics(Time) ->
 stop_get_metrics() ->
 	gen_server:call(?MODULE, stop_collecting_metrics).
 
+-spec get_frequency() -> pos_integer().
+get_frequency() ->
+	gen_server:call(?MODULE, get_frequency).
+
 %%%====================================================================
 %% gen_server functioncs
 %%=====================================================================
@@ -38,6 +42,8 @@ init([]) ->
 	{ok, #state{timer_ref=TimerRef, freq=5000}}.
 
 %% @hidden
+handle_call(get_frequency, _From, State) ->
+	{reply, State#state.freq, State};
 handle_call(start_get_metrics, _From, State) ->
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	{reply, ok, #state{timer_ref=TimerRef, freq=State#state.freq}};

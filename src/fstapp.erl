@@ -1,5 +1,5 @@
 -module(fstapp).
--export([start_metrics/0, change_frequency/1, stop_metrics/0]).
+-export([start_metrics/0, change_frequency/1, stop_metrics/0, get_current_frequency/0]).
 
 start_metrics() ->
 	fstapp_server:start_get_metrics().
@@ -13,3 +13,5 @@ change_frequency(_) ->
 stop_metrics() ->
 	fstapp_server:stop_get_metrics().
 
+get_current_frequency() ->
+	fstapp_server:get_frequency().
