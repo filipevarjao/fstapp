@@ -15,4 +15,4 @@ all() ->
 
 my_test_case(_Config) ->
 	ct:log(start_get_metrics, "start collect metrics from the system~n"),
-	{ok, _} = fstapp:start_metrics().
+	ok.
