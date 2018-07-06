@@ -13,8 +13,6 @@ end_per_suite(Config) ->
 all() ->
 	[my_test_case].
 
-my_test_case() ->
-	[].
-
 my_test_case(_Config) ->
-	ok.
+	ct:log(start_get_metrics, "start collect metrics from the system~n"),
+	{ok, _} = fstapp:start_metrics().
