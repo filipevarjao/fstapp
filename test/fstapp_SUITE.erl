@@ -2,11 +2,13 @@
 
 -include_lib("common_test/include/ct.hrl").
 
-init_per_suite(_Config) ->
-  _Config.
+-compile(export_all).
 
-end_per_suite(_Config) ->
-  _Config.
+init_per_suite(Config) ->
+	Config.
+
+end_per_suite(Config) ->
+	Config.
 
 all() ->
 	[my_test_case].
@@ -14,7 +16,5 @@ all() ->
 my_test_case() ->
 	[].
 
-my_test_case(_Config) -> 
+my_test_case(_Config) ->
 	ok.
-
-
