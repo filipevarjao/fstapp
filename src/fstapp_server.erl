@@ -6,8 +6,14 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
 
+-type field_data() :: {term()}.
+
+-type metrics() :: [field_data()].
+
 %% state
 -record(state, {timer_ref :: reference() , freq :: pos_integer()}).
+
+-export_type([metrics/0]).
 
 %%%====================================================================
 %% API functioncs
