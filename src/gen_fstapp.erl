@@ -1,2 +1,0 @@
--module(gen_fstapp).
--callback handle_data(fstapp_server:metrics()) -> ok.

@@ -6,7 +6,7 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
 
--type field_data() :: {term()}.
+-type field_data() :: {atom(), number()}.
 
 -type metrics() :: [field_data()].
 
