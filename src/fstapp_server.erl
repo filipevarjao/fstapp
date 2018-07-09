@@ -49,8 +49,8 @@ handle_call(start_get_metrics, _From, State) ->
 	{reply, ok, #state{timer_ref=TimerRef, freq=State#state.freq}};
 handle_call({change_freq_metrics, Time}, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
-	TimerRef = erlang:send_after(Time*1000, self(), collect_metrics),
-	{reply, ok, #state{timer_ref=TimerRef, freq=Time*1000}};
+	TimerRef = erlang:send_after(Time, self(), collect_metrics),
+	{reply, ok, #state{timer_ref=TimerRef, freq=Time}};
 handle_call(stop_collecting_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	{reply, ok, State}.
