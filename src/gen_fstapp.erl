@@ -1,2 +1,2 @@
 -module(gen_fstapp).
--callback get_data(fstapp_server:metrics()) -> fstapp_server:metrics().
+-callback handle_data(fstapp_server:metrics()) -> ok.
