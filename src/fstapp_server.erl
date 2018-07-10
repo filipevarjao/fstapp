@@ -83,7 +83,7 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 %% @private
--spec metrics() -> ok.
+-spec metrics() -> no_return().
 metrics() ->
 	{_, OsType} = os:type(),
 	ProcessCount = cpu_sup:nprocs(),
@@ -93,7 +93,7 @@ metrics() ->
 	print_data([{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList).
 
 %% @private
--spec print_data([tuple()]) -> ok.
+-spec print_data(metrics()) -> ok.
 print_data([]) -> ok;
 print_data([H|T]) ->
 	case H of
