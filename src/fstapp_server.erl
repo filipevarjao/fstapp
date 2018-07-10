@@ -6,8 +6,14 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
 
+-type field_data() :: {atom(), number()} | {atom(), atom()}.
+
+-type metrics() :: [field_data()].
+
 %% state
 -record(state, {timer_ref :: reference() , freq :: pos_integer()}).
+
+-export_type([metrics/0, field_data/0]).
 
 %%%====================================================================
 %% API functioncs
@@ -87,7 +93,7 @@ metrics() ->
 	print_data([{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList).
 
 %% @private
--spec print_data([tuple()]) -> ok.
+-spec print_data(metrics()) -> ok.
 print_data([]) -> ok;
 print_data([H|T]) ->
 	case H of

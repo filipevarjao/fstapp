@@ -1,0 +1,2 @@
+-module(fstapp_handler).
+-callback handle_data(fstapp_server:metrics()) -> ok.
