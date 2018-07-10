@@ -67,7 +67,7 @@ handle_cast(_Msg, State) ->
 
 %% @hidden
 handle_info(collect_metrics, State) ->
-	ok = metrics(),
+	callback_module:handle_data = metrics(),
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	{noreply, State#state{timer_ref=TimerRef}};
@@ -90,4 +90,4 @@ metrics() ->
 	CpuUtil = cpu_sup:util(),
 	MemDataList = memsup:get_system_memory_data(),
 	DiskUsed = disksup:get_almost_full_threshold(),
-	callback_module:handle_data([{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList).
+	[{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList.
