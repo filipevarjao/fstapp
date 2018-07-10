@@ -11,7 +11,7 @@
 -type metrics() :: [field_data()].
 
 %% state
--record(state, {timer_ref :: reference() , freq :: pos_integer()}).
+-record(state, {timer_ref :: reference() , freq :: pos_integer(), callback_module :: atom()}).
 
 -export_type([metrics/0, field_data/0]).
 
@@ -90,22 +90,4 @@ metrics() ->
 	CpuUtil = cpu_sup:util(),
 	MemDataList = memsup:get_system_memory_data(),
 	DiskUsed = disksup:get_almost_full_threshold(),
-	print_data([{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList).
-
-%% @private
--spec print_data(metrics()) -> ok.
-print_data([]) -> ok;
-print_data([H|T]) ->
-	case H of
-		{ostype, Value} ->
-			io:format("Operating System ~p~n", [Value]);
-		{cpu, Value} ->
-			io:format("CPU utilization ~p%~n", [Value]);
-		{disk, Value} ->
-			io:format("Percentage of disk space utilization ~p%~n", [Value]);
-		{proc, Value} ->
-			io:format("Number of processes running on this machine: ~p~n", [Value]);
-		{Tag, Value} ->
-			io:format("~p total of memory for ~p~n", [Value, Tag])
-	end,
-	print_data(T).
+	callback_module:handle_data([{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList).
