@@ -6,25 +6,27 @@
 
 init_per_testcase(_, Config) ->
 	true = register(fstapp_SUITE_process, self()),
+	_ = application:ensure_all_started(fstapp),
 	Config.
 
 end_per_testcase(_, _Config) ->
-	ok.
+	application:stop(fstapp).
 
 all() ->
-        [my_test_case].
+        [external_case, internal_case].
 
-my_test_case(_Config) ->
-
-%        true = register(fstapp_SUITE_process, self()),
+external_case(_Config) ->
 
         receive
                 Metrics ->
-                	{value, {cpu, _}} = lists:keysearch(cpu, 1, Metrics),
-                        {value, {ostype, _}} = lists:keysearch(ostype, 1, Metrics),
-                        {value, {proc, _}} = lists:keysearch(proc, 1, Metrics),
-                        {value, {disk, _}} = lists:keysearch(disk, 1, Metrics)
-        end,
+                	{cpu, _} = lists:keyfind(cpu, 1, Metrics),
+                        {ostype, _} = lists:keyfind(ostype, 1, Metrics),
+                        {proc, _} = lists:keyfind(proc, 1, Metrics),
+                        {disk, _} = lists:keyfind(disk, 1, Metrics)
+        end.
+
+
+internal_case(_Config) ->
 
         ct:log(start, "The server start by collecting metrics with frequency value as 5ms~n"),
         CurrentFreq = 5000, % It represents the time in milliseconds.
@@ -34,4 +36,3 @@ my_test_case(_Config) ->
         NewFreq = 10000,
         ok = fstapp:change_frequency(NewFreq),
         NewFreq = fstapp:get_current_frequency().
-
