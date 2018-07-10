@@ -68,7 +68,7 @@ handle_cast(_Msg, State) ->
 %% @hidden
 handle_info(collect_metrics, State) ->
 	Module = State#state.callback_module,
-	Module:handle_data(metrics()),
+	ok = Module:handle_data(metrics()),
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	{noreply, State#state{timer_ref=TimerRef}};
@@ -84,7 +84,7 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 %% @private
--spec metrics() -> [field_data()].
+-spec metrics() -> metrics().
 metrics() ->
 	{_, OsType} = os:type(),
 	ProcessCount = cpu_sup:nprocs(),
