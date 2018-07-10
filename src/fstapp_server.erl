@@ -6,14 +6,14 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
 
--type field_data() :: {atom(), number()}.
+-type field_data() :: {atom(), number()} | {atom(), atom()}.
 
 -type metrics() :: [field_data()].
 
 %% state
 -record(state, {timer_ref :: reference() , freq :: pos_integer()}).
 
--export_type([metrics/0]).
+-export_type([metrics/0, field_data/0]).
 
 %%%====================================================================
 %% API functioncs
@@ -83,7 +83,7 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 %% @private
--spec metrics() -> no_return().
+-spec metrics() -> ok.
 metrics() ->
 	{_, OsType} = os:type(),
 	ProcessCount = cpu_sup:nprocs(),
