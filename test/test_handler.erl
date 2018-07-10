@@ -6,6 +6,5 @@
 
 handle_data(Metrics) ->
 	TestProc = whereis(fstapp_SUITE_process),
-	io:format("here ~p~n", [TestProc]),
 	TestProc ! Metrics,
 	ok.

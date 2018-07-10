@@ -4,20 +4,19 @@
 
 -compile(export_all).
 
-init_per_suite(Config) ->
-        application:ensure_all_started(fstapp),
-        Config.
+init_per_testcase(_, Config) ->
+	true = register(fstapp_SUITE_process, self()),
+	Config.
 
-end_per_suite(Config) ->
-        application:stop(fstapp),
-        Config.
+end_per_testcase(_, _Config) ->
+	ok.
 
 all() ->
         [my_test_case].
 
 my_test_case(_Config) ->
 
-        true = register(fstapp_SUITE_process, self()),
+%        true = register(fstapp_SUITE_process, self()),
 
         receive
                 Metrics ->
