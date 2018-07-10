@@ -44,8 +44,9 @@ get_frequency() ->
 
 %% @hidden
 init([]) ->
+	{ok, Module} = application:get_env(fstapp, callback_module),
 	TimerRef = erlang:send_after(5000, self(), collect_metrics),
-	{ok, #state{timer_ref=TimerRef, freq=5000}}.
+	{ok, #state{timer_ref=TimerRef, freq=5000, callback_module=Module}}.
 
 %% @hidden
 handle_call(get_frequency, _From, State) ->
