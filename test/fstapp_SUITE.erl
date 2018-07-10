@@ -21,12 +21,10 @@ my_test_case(_Config) ->
 
         receive
                 Metrics ->
-                        {cpu, _} = lists:keysearch("cpu", 1, Metrics)
-        %               {cpu, _} = erlang:keyfind(cpu, 1, Metrics),
-        %               {ostype, _} = erlang:keyfind(ostype, 1, Metrics),
-        %               {proc, _} = erlang:keyfind(proc, 1, Metrics),
-        %               {disk, _} = erlang:keyfind(disk, 1, Metrics)
-
+                	{value, {cpu, _}} = lists:keysearch(cpu, 1, Metrics),
+                        {value, {ostype, _}} = lists:keysearch(ostype, 1, Metrics),
+                        {value, {proc, _}} = lists:keysearch(proc, 1, Metrics),
+                        {value, {disk, _}} = lists:keysearch(disk, 1, Metrics)
         end,
 
         ct:log(start, "The server start by collecting metrics with frequency value as 5ms~n"),
