@@ -5,6 +5,7 @@
 -compile(export_all).
 
 init_per_suite(Config) ->
+	true = register(fstapp_SUITE_process, self()),
 	application:ensure_all_started(fstapp),
 	Config.
 
@@ -16,6 +17,17 @@ all() ->
 	[my_test_case].
 
 my_test_case(_Config) ->
+
+	{ok, Module} = application:get_env(fstapp, callback_module),
+
+	receive
+		Metrics ->
+			{cpu, _} = erlang:keyfind(cpu, 1, Metrics),
+			{ostype, _} = erlang:keyfind(ostype, 1, Metrics),
+			{proc, _} = erlang:keyfind(proc, 1, Metrics),
+			{disk, _} = erlang:keyfind(disk, 1, Metrics)
+
+	end,
 
 	ct:log(start, "The server start by collecting metrics with frequency value as 5ms~n"),
 	CurrentFreq = 5000, % It represents the time in milliseconds.
