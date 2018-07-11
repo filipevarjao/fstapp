@@ -13,7 +13,7 @@ end_per_testcase(_, _Config) ->
 	application:stop(fstapp).
 
 all() ->
-        [metrics_test, frequency_test].
+        [metrics_test, frequency_test, stop_metrics_test].
 
 metrics_test(_Config) ->
 
@@ -25,7 +25,7 @@ metrics_test(_Config) ->
                         {disk, _} = lists:keyfind(disk, 1, Metrics)
 	after
 		10000 ->
-			{error, error_reason}
+			ct:fail("Metrics are not received or handler did not send a message.")
         end.
 
 
@@ -39,3 +39,14 @@ frequency_test(_Config) ->
         NewFreq = 10000,
         ok = fstapp:change_frequency(NewFreq),
         NewFreq = fstapp:get_current_frequency().
+
+stop_metrics_test(_Config) ->
+
+	ok = fstapp:stop_metrics(),
+	receive
+		Metrics ->
+			ct:fail("The server do not stop to collect the metrics.")
+	after
+		10000 ->
+			ok
+	end.
