@@ -44,7 +44,7 @@ stop_test(_Config) ->
 
 	ok = fstapp:stop_metrics(),
 	receive
-		Metrics ->
+		_Metrics ->
 			ct:fail("The server do not stop to collect the metrics.")
 	after
 		3000 ->
@@ -53,9 +53,9 @@ stop_test(_Config) ->
 
 start_test(_Config) ->
 
-	ok = fstapp:change_frequency(1000), % Updating the timer to not spend too much time testing.
-	ok = fstapp:stop_metrics(),
-	ok = fstapp:start_metrics(),
+	fstapp:change_frequency(1000), % Updating the timer to not spend too much time testing.
+	fstapp:stop_metrics(),
+	fstapp:start_metrics(),
 	receive
 		Metrics ->
 			{cpu, _} = lists:keyfind(cpu, 1, Metrics),
