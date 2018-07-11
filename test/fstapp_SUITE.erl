@@ -13,9 +13,9 @@ end_per_testcase(_, _Config) ->
 	application:stop(fstapp).
 
 all() ->
-        [external_case, internal_case].
+        [metrics_test, frequency_test].
 
-external_case(_Config) ->
+metrics_test(_Config) ->
 
         receive
                 Metrics ->
@@ -23,10 +23,13 @@ external_case(_Config) ->
                         {ostype, _} = lists:keyfind(ostype, 1, Metrics),
                         {proc, _} = lists:keyfind(proc, 1, Metrics),
                         {disk, _} = lists:keyfind(disk, 1, Metrics)
+	after
+		10000 ->
+			{error, error_reason}
         end.
 
 
-internal_case(_Config) ->
+frequency_test(_Config) ->
 
         ct:log(start, "The server start by collecting metrics with frequency value as 5ms~n"),
         CurrentFreq = 5000, % It represents the time in milliseconds.
