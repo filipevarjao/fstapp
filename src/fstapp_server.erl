@@ -53,11 +53,13 @@ handle_call(get_frequency, _From, State) ->
 	{reply, State#state.freq, State};
 handle_call(start_get_metrics, _From, State) ->
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
-	{reply, ok, #state{timer_ref=TimerRef, freq=State#state.freq, callback_module=State#state.callback_module}};
+	NewState = State#state{timer_ref=TimerRef},
+	{reply, ok, NewState};
 handle_call({change_freq_metrics, Time}, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(Time, self(), collect_metrics),
-	{reply, ok, #state{timer_ref=TimerRef, freq=Time, callback_module=State#state.callback_module}};
+	NewState = State#state{timer_ref=TimerRef, freq=Time},
+	{reply, ok, NewState};
 handle_call(stop_collecting_metrics, _From, State) ->
 	erlang:cancel_timer(State#state.timer_ref),
 	{reply, ok, State}.
@@ -72,7 +74,8 @@ handle_info(collect_metrics, State) ->
 	ok = Module:handle_data(metrics()),
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
-	{noreply, State#state{timer_ref=TimerRef}};
+	NewState = State#state{timer_ref=TimerRef},
+	{noreply, NewState};
 handle_info(_, State) ->
 	{noreply, State}.
 
