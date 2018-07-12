@@ -6,6 +6,20 @@
 
 -compile(export_all).
 
+-record(metrics, {ostype,
+		  cpu,
+		  disk,
+		  proc,
+		  total_memory,
+		  free_memory,
+		  system_total_memory,
+		  largest_free,
+		  number_of_free,
+		  buffered_memory,
+		  cached_memory,
+		  total_swap,
+		  free_swap}).
+
 init_per_testcase(_, Config) ->
 
 	true = register(fstapp_mnesia_SUITE_process, self()),

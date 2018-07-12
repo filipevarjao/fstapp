@@ -1,7 +1,6 @@
 -module(fstapp_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
--include_lib("stdlib/include/qlc.hrl").
 
 -compile(export_all).
 
