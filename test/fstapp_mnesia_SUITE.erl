@@ -20,4 +20,6 @@ all() -> [mnesia_test].
 
 mnesia_test(_Config) ->
 
-	{atomic, _Metrics} = mnesia:transaction(fun() -> qlc:eval( qlc:q([ X || X <- mnesia:table(metrics) ])) end).
+	timer:sleep(10000),
+	{atomic, Metrics} = mnesia:transaction(fun() -> qlc:eval( qlc:q([ X || X <- mnesia:table(metrics) ])) end),
+	ct:log("Show me the data. ~p", [Metrics]).
