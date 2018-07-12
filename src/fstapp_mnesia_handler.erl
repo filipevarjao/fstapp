@@ -2,7 +2,7 @@
 
 -behaviour(fstapp_handler).
 
--export([handle_data/1, store/1]).
+-export([handle_init/0 ,handle_data/1]).
 
 -include_lib("stdlib/include/qlc.hrl"). 
 
@@ -20,22 +20,23 @@
 		  total_swap,
 		  free_swap}).
 
-handle_data(Metrics) ->
-	store(Metrics).
-
-store(Metrics) ->
+handle_init() ->
 	case mnesia:create_schema([node()]) of
 		ok ->
 			mnesia:start(),
 			case mnesia:create_table(metrics,[{attributes, record_info(fields, metrics)}]) of
-				{atomic, ok} ->	insert_data(metrics, Metrics);
-				{aborted, {already_exists, metric}} -> insert_data(metrics, Metrics);
+				{atomic, ok} ->	ok;
+				{aborted, {already_exists, metric}} -> {aborted, {already_exists, metric}};
 				{aborted, Reason} -> {error, Reason}
 			end;
-		{error, already_exists} -> insert_data(metrics, Metrics)
+		{error,{_,{already_exists,_}}} -> ok;
+		{error, Reason} -> {error, Reason}
 	end.
 
-insert_data(metrics, Metrics) ->
+handle_data(Metrics) ->
+	insert_data(Metrics).
+
+insert_data(Metrics) ->
 	{ostype, OsType} = lists:keyfind(ostype, 1, Metrics),
 	{cpu, Cpu} = lists:keyfind(cpu, 1, Metrics),
 	{proc, Proc} = lists:keyfind(proc, 1, Metrics),
@@ -64,6 +65,4 @@ insert_data(metrics, Metrics) ->
 			 free_swap=FreeS})
 			end,
 	{atomic, ok} = mnesia:transaction(Fun).
-%	TestProc = whereis(fstapp_SUITE_process),
-%	TestProc ! OsType.
 	
