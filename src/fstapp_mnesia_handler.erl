@@ -13,7 +13,6 @@
 		  total_memory,
 		  free_memory,
 		  system_total_memory,
-		  buffered_memory,
 		  cached_memory,
 		  total_swap,
 		  free_swap}).
@@ -35,7 +34,6 @@ insert_data(Metrics) ->
 	{total_memory, TotalM} = lists:keyfind(total_memory, 1, Metrics),
 	{free_memory, FreeM} = lists:keyfind(free_memory, 1, Metrics),
 	{system_total_memory, SystemTM} = lists:keyfind(system_total_memory, 1, Metrics),
-	{buffered_memory, BufferedM} = lists:keyfind(buffered_memory, 1, Metrics),
 	{cached_memory, CachedM} = lists:keyfind(cached_memory, 1, Metrics),
 	{total_swap, TotalS} = lists:keyfind(total_swap, 1, Metrics),
 	{free_swap, FreeS} = lists:keyfind(free_swap, 1, Metrics),
@@ -48,7 +46,6 @@ insert_data(Metrics) ->
 			 total_memory=TotalM,
 			 free_memory=FreeM,
 			 system_total_memory=SystemTM,
-			 buffered_memory=BufferedM,
 			 cached_memory=CachedM,
 			 total_swap=TotalS,
 			 free_swap=FreeS})

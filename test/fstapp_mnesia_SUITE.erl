@@ -11,6 +11,7 @@ init_per_testcase(_, Config) ->
 	ok = application:set_env(fstapp, callback_module, fstapp_mnesia_handler),
 	{ok, fstapp_mnesia_handler} = application:get_env(fstapp, callback_module),
 	_ = application:ensure_all_started(fstapp),
+	fstapp:change_frequency(200),
 	Config.
 
 end_per_testcase(_, _Config) ->
@@ -20,6 +21,7 @@ all() -> [mnesia_test].
 
 mnesia_test(_Config) ->
 
-	timer:sleep(10000),
-	{atomic, Metrics} = mnesia:transaction(fun() -> qlc:eval( qlc:q([ X || X <- mnesia:table(metrics) ])) end),
-	ct:log("Show me the data. ~p", [Metrics]).
+	timer:sleep(1000),
+	{atomic, [Metrics]} = mnesia:transaction(fun() -> qlc:eval( qlc:q([ X || X <- mnesia:table(metrics) ])) end),
+	0 =/= tuple_size(Metrics).
+	
