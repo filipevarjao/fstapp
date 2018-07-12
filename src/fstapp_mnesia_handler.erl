@@ -6,7 +6,19 @@
 
 -include_lib("stdlib/include/qlc.hrl"). 
 
-include("metrics.hrl").
+-record(metrics, {ostype,
+		  cpu,
+		  disk,
+		  proc,
+		  total_memory,
+		  free_memory,
+		  system_total_memory,
+		  largest_free,
+		  number_of_free,
+		  buffered_memory,
+		  cached_memory,
+		  total_swap,
+		  free_swap}).
 
 handle_data(Metrics) ->
 	store(Metrics).
