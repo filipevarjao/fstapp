@@ -19,13 +19,9 @@
 		  free_swap}).
 
 handle_init() ->
-	mnesia:start(),
-	_ = mnesia:create_schema([node()]),
-	case mnesia:create_table(metrics,[{attributes, record_info(fields, metrics)}]) of
-		{atomic, ok} ->	ok;
-		{aborted, {already_exists, metric}} -> {aborted, {already_exists, metric}};
-		{aborted, Reason} -> {error, Reason}
-	end.
+	_ =  mnesia:create_schema([node()]),
+	_ = mnesia:create_table(metrics,[{attributes, record_info(fields, metrics)}]),
+	ok.
 
 handle_data(Metrics) ->
 	insert_data(Metrics),
@@ -34,6 +30,7 @@ handle_data(Metrics) ->
 insert_data(Metrics) ->
 	{ostype, OsType} = lists:keyfind(ostype, 1, Metrics),
 	{cpu, Cpu} = lists:keyfind(cpu, 1, Metrics),
+	{disk, Disk} = lists:keyfind(disk, 1, Metrics),
 	{proc, Proc} = lists:keyfind(proc, 1, Metrics),
 	{total_memory, TotalM} = lists:keyfind(total_memory, 1, Metrics),
 	{free_memory, FreeM} = lists:keyfind(free_memory, 1, Metrics),
@@ -46,6 +43,7 @@ insert_data(Metrics) ->
 		mnesia:write(
 		#metrics{ostype=OsType,
 			 cpu=Cpu,
+			 disk=Disk,
 			 proc=Proc,
 			 total_memory=TotalM,
 			 free_memory=FreeM,
