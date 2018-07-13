@@ -1,11 +1,12 @@
 -module(fstapp_print_metrics_handler).
 -behaviour(fstapp_handler).
--export([handle_init/0, handle_data/1]).
+-export([handle_init/0, handle_data/2]).
 
-handle_init() -> ok.
+handle_init() -> {ok, ok}.
 
-handle_data(Metrics) ->
-	print_data(Metrics).
+handle_data(Metrics, InternalState) ->
+	print_data(Metrics),
+	{ok, InternalState}.
 
 print_data([]) -> ok;
 print_data([H|T]) ->	case H of

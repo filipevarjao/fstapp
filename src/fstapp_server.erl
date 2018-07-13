@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 
 -export([start_link/0, start_get_metrics/0, change_freq_metrics/1]).
--export([stop_get_metrics/0, get_frequency/0, add_socket/1, get_socket/0]).
+-export([stop_get_metrics/0, get_frequency/0]).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
@@ -13,7 +13,7 @@
 
 %% state
 -record(state, {timer_ref :: reference() , freq :: pos_integer(),
-		callback_module :: atom(), sock :: term()}).
+		callback_module :: atom(), internal_state :: term()}).
 
 -export_type([metrics/0, field_data/0]).
 
@@ -40,13 +40,6 @@ stop_get_metrics() ->
 get_frequency() ->
 	gen_server:call(?MODULE, get_frequency).
 
--spec add_socket(term()) -> ok.
-add_socket(Sock) ->
-	gen_server:call(?MODULE, {add_socket, Sock}).
-
--spec get_socket() -> term().
-get_socket() ->
-	gen_server:call(?MODULE, get_socket).
 %%%====================================================================
 %% gen_server functioncs
 %%=====================================================================
@@ -55,15 +48,11 @@ get_socket() ->
 init([]) ->
 	{ok, Module} = application:get_env(fstapp, callback_module),
 	TimerRef = erlang:send_after(5000, self(), collect_metrics),
-	ok = Module:handle_init(),
-	{ok, #state{timer_ref=TimerRef, freq=5000, callback_module=Module}}.
+	{ok, InternalState} = Module:handle_init(),
+	{ok, #state{timer_ref=TimerRef, freq=5000,
+		    callback_module=Module, internal_state=InternalState}}.
 
 %% @hidden
-handle_call(get_socket, _From, State) ->
-	{reply, State#state.sock, State};
-handle_call({add_socket, Sock}, _From, State) ->
-	NewState = State#state{sock=Sock},
-	{reply, ok, NewState};
 handle_call(get_frequency, _From, State) ->
 	{reply, State#state.freq, State};
 handle_call(start_get_metrics, _From, State) ->
@@ -86,10 +75,10 @@ handle_cast(_Msg, State) ->
 %% @hidden
 handle_info(collect_metrics, State) ->
 	Module = State#state.callback_module,
-	ok = Module:handle_data(metrics()),
+	{ok, InternalState} = Module:handle_data(metrics(), State#state.internal_state),
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
-	NewState = State#state{timer_ref=TimerRef},
+	NewState = State#state{timer_ref=TimerRef, internal_state=InternalState},
 	{noreply, NewState};
 handle_info(_, State) ->
 	{noreply, State}.

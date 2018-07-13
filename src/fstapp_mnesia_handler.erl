@@ -2,7 +2,7 @@
 
 -behaviour(fstapp_handler).
 
--export([handle_init/0 ,handle_data/1]).
+-export([handle_init/0 ,handle_data/2]).
 
 -include_lib("stdlib/include/qlc.hrl"). 
 
@@ -18,11 +18,11 @@
 handle_init() ->
 	_ =  mnesia:create_schema([node()]),
 	_ = mnesia:create_table(metrics,[{attributes, record_info(fields, metrics)}]),
-	ok.
+	{ok, ok}.
 
-handle_data(Metrics) ->
+handle_data(Metrics, InternalState) ->
 	insert_data(Metrics),
-	ok.
+	{ok, InternalState}.
 
 insert_data(Metrics) ->
 	{ostype, OsType} = lists:keyfind(ostype, 1, Metrics),
@@ -44,4 +44,4 @@ insert_data(Metrics) ->
 			 system_total_memory=SystemTM})
 			end,
 	{atomic, ok} = mnesia:transaction(Fun).
-	
+
