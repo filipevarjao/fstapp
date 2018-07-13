@@ -1,3 +1,4 @@
 -module(fstapp_handler).
 -callback handle_init() -> {ok, term()}.
 -callback handle_data(fstapp_server:metrics(), term()) -> {ok, term()}.
+-callback handle_terminate(term()) -> ok.

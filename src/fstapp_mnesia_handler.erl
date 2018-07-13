@@ -2,7 +2,7 @@
 
 -behaviour(fstapp_handler).
 
--export([handle_init/0 ,handle_data/2]).
+-export([handle_init/0 ,handle_data/2, handle_terminate/1]).
 
 -include_lib("stdlib/include/qlc.hrl"). 
 
@@ -45,3 +45,4 @@ insert_data(Metrics) ->
 			end,
 	{atomic, ok} = mnesia:transaction(Fun).
 
+handle_terminate(_State) -> ok.

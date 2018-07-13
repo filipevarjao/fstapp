@@ -16,14 +16,11 @@ init_per_testcase(_, Config) ->
 end_per_testcase(_, Config) ->
 	ok = application:stop(fstapp),
 	LSock = ?config(lsock, Config),
-	Sock = ?config(socket, Config),
-	ok = gen_tcp:close(Sock),
 	ok = gen_tcp:close(LSock).
 
 all() -> [tcp_test].
 
 tcp_test(Config) ->
 	LSock = ?config(lsock, Config),
-	{ok,Sock} = gen_tcp:accept(LSock),
-	{ok, _Metrics} = gen_tcp:recv(Sock, 0),
-	[ {socket, Sock} | Config].
+	{ok, Sock} = gen_tcp:accept(LSock),
+	{ok, _Metrics} = gen_tcp:recv(Sock, 0).

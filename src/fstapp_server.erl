@@ -84,8 +84,9 @@ handle_info(_, State) ->
 	{noreply, State}.
 
 %% @hidden
-terminate(_Reason, _State) ->
-	ok.
+terminate(_Reason, State) ->
+	Module = State#state.callback_module,
+	Module:handle_terminate(State#state.internal_state).
 
 %%====================================================================
 %% Internal functions
