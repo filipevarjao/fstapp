@@ -1,6 +1,6 @@
 -module(fstapp_print_metrics_handler).
 -behaviour(fstapp_handler).
--export([handle_init/0, handle_data/1, print_data/1]).
+-export([handle_init/0, handle_data/1]).
 
 handle_init() -> ok.
 

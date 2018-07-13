@@ -6,17 +6,14 @@
 
 -include_lib("stdlib/include/qlc.hrl"). 
 
--record(metrics, {mid,
+-record(metrics, {id,
 		  ostype,
 		  cpu,
 		  disk,
 		  proc,
 		  total_memory,
 		  free_memory,
-		  system_total_memory,
-		  cached_memory,
-		  total_swap,
-		  free_swap}).
+		  system_total_memory}).
 
 handle_init() ->
 	_ =  mnesia:create_schema([node()]),
@@ -35,22 +32,16 @@ insert_data(Metrics) ->
 	{total_memory, TotalM} = lists:keyfind(total_memory, 1, Metrics),
 	{free_memory, FreeM} = lists:keyfind(free_memory, 1, Metrics),
 	{system_total_memory, SystemTM} = lists:keyfind(system_total_memory, 1, Metrics),
-	{cached_memory, CachedM} = lists:keyfind(cached_memory, 1, Metrics),
-	{total_swap, TotalS} = lists:keyfind(total_swap, 1, Metrics),
-	{free_swap, FreeS} = lists:keyfind(free_swap, 1, Metrics),
 	Fun = fun() ->
 		mnesia:write(
-		#metrics{mid=erlang:system_time(),
+		#metrics{id=erlang:system_time(),
 			 ostype=OsType,
 			 cpu=Cpu,
 			 disk=Disk,
 			 proc=Proc,
 			 total_memory=TotalM,
 			 free_memory=FreeM,
-			 system_total_memory=SystemTM,
-			 cached_memory=CachedM,
-			 total_swap=TotalS,
-			 free_swap=FreeS})
+			 system_total_memory=SystemTM})
 			end,
 	{atomic, ok} = mnesia:transaction(Fun).
 	

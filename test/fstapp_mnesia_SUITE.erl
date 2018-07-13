@@ -10,7 +10,7 @@ init_per_testcase(_, Config) ->
 
 	ok = application:set_env(fstapp, callback_module, fstapp_mnesia_handler),
 	{ok, fstapp_mnesia_handler} = application:get_env(fstapp, callback_module),
-	_ = application:ensure_all_started(fstapp),
+	{ok, _} = application:ensure_all_started(fstapp),
 	fstapp:change_frequency(200),
 	Config.
 
