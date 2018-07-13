@@ -8,8 +8,7 @@ handle_init() ->
 	gen_tcp:connect("localhost", 5678, [binary, {packet, 0}]).
 
 handle_data(Metrics, Sock) ->
-	gen_tcp:send(Sock, Metrics),
+	gen_tcp:send(Sock, erlang:term_to_binary(Metrics)),
 	{ok, Sock}.
 
-handle_terminate(Sock) ->
-	gen_tcp:close(Sock).
+handle_terminate(_Sock) -> ok.

@@ -23,4 +23,10 @@ all() -> [tcp_test].
 tcp_test(Config) ->
 	LSock = ?config(lsock, Config),
 	{ok, Sock} = gen_tcp:accept(LSock),
-	{ok, _Metrics} = gen_tcp:recv(Sock, 0).
+	{ok, Metrics} = gen_tcp:recv(Sock, 0),
+	ok = gen_tcp:close(Sock),
+	Metr = binary_to_term(Metrics),
+	{cpu, _} = lists:keyfind(cpu, 1, Metr),
+	{ostype, _} = lists:keyfind(ostype, 1, Metr),
+	{proc, _} = lists:keyfind(proc, 1, Metr),
+	{disk, _} = lists:keyfind(disk, 1, Metr).
