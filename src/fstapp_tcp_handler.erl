@@ -7,7 +7,5 @@
 handle_init() -> ok.
 
 handle_data(Metrics) ->
-	{ok, Sock} = gen_tcp:connect("localhost", 5678, 
-                                 [list, {packet, 0}]),
-	ok = gen_tcp:send(Sock, Metrics),
-	gen_tcp:close(Sock).
+	{ok, Sock} = gen_tcp:connect("localhost", 5678, []),
+	gen_tcp:send(Sock, "Metrics").

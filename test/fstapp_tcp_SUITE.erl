@@ -18,7 +18,7 @@ all() -> [tcp_test].
 
 tcp_test(_Config) ->
 	{ok, LSock} = gen_tcp:listen(5678, [list, {packet, 0},
-                                            {active, false}]),
+			{active, false}, {reuseaddr, true}]),
 	{ok,Sock} = gen_tcp:accept(LSock),
 	{ok, _} = gen_tcp:recv(Sock, 0),
 	ok = gen_tcp:close(Sock),
