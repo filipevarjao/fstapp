@@ -2,11 +2,11 @@
 
 -behaviour(fstapp_handler).
 
--export([handle_init/0, handle_data/1]).
+-export([handle_init/0, handle_data/2]).
 
-handle_init() -> ok.
+handle_init() -> {ok, #{}}.
 
-handle_data(Metrics) ->
+handle_data(Metrics, State) ->
 	TestProc = whereis(fstapp_SUITE_process),
 	TestProc ! Metrics,
-	ok.
+	{ok, State}.
