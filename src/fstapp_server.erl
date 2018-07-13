@@ -1,7 +1,8 @@
 -module(fstapp_server).
 -behaviour(gen_server).
 
--export([start_link/0, start_get_metrics/0, change_freq_metrics/1, stop_get_metrics/0, get_frequency/0]).
+-export([start_link/0, start_get_metrics/0, change_freq_metrics/1]).
+-export([stop_get_metrics/0, get_frequency/0, add_socket/1, get_socket/0]).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	terminate/2]).
@@ -11,7 +12,8 @@
 -type metrics() :: [field_data()].
 
 %% state
--record(state, {timer_ref :: reference() , freq :: pos_integer(), callback_module :: atom()}).
+-record(state, {timer_ref :: reference() , freq :: pos_integer(),
+		callback_module :: atom(), sock :: term()}).
 
 -export_type([metrics/0, field_data/0]).
 
@@ -38,6 +40,13 @@ stop_get_metrics() ->
 get_frequency() ->
 	gen_server:call(?MODULE, get_frequency).
 
+-spec add_socket(term()) -> ok.
+add_socket(Sock) ->
+	gen_server:call(?MODULE, {add_socket, Sock}).
+
+-spec get_socket() -> term().
+get_socket() ->
+	gen_server:call(?MODULE, get_socket).
 %%%====================================================================
 %% gen_server functioncs
 %%=====================================================================
@@ -50,6 +59,11 @@ init([]) ->
 	{ok, #state{timer_ref=TimerRef, freq=5000, callback_module=Module}}.
 
 %% @hidden
+handle_call(get_socket, _From, State) ->
+	{reply, State#state.sock, State};
+handle_call({add_socket, Sock}, _From, State) ->
+	NewState = State#state{sock=Sock},
+	{reply, ok, NewState};
 handle_call(get_frequency, _From, State) ->
 	{reply, State#state.freq, State};
 handle_call(start_get_metrics, _From, State) ->
