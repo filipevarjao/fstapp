@@ -6,7 +6,8 @@
 
 -include_lib("stdlib/include/qlc.hrl"). 
 
--record(metrics, {ostype,
+-record(metrics, {mid,
+		  ostype,
 		  cpu,
 		  disk,
 		  proc,
@@ -39,7 +40,8 @@ insert_data(Metrics) ->
 	{free_swap, FreeS} = lists:keyfind(free_swap, 1, Metrics),
 	Fun = fun() ->
 		mnesia:write(
-		#metrics{ostype=OsType,
+		#metrics{mid=erlang:system_time(),
+			 ostype=OsType,
 			 cpu=Cpu,
 			 disk=Disk,
 			 proc=Proc,
