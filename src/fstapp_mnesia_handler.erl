@@ -18,11 +18,11 @@
 handle_init() ->
 	_ =  mnesia:create_schema([node()]),
 	_ = mnesia:create_table(metrics,[{attributes, record_info(fields, metrics)}]),
-	{ok, ok}.
+	{ok, nostate}.
 
-handle_data(Metrics, InternalState) ->
+handle_data(Metrics, State) ->
 	insert_data(Metrics),
-	{ok, InternalState}.
+	{ok, State}.
 
 insert_data(Metrics) ->
 	{ostype, OsType} = lists:keyfind(ostype, 1, Metrics),

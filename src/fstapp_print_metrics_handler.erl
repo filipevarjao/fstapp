@@ -2,11 +2,11 @@
 -behaviour(fstapp_handler).
 -export([handle_init/0, handle_data/2]).
 
-handle_init() -> {ok, ok}.
+handle_init() -> {ok, #{}}.
 
-handle_data(Metrics, InternalState) ->
+handle_data(Metrics, State) ->
 	print_data(Metrics),
-	{ok, InternalState}.
+	{ok, State}.
 
 print_data([]) -> ok;
 print_data([H|T]) ->	case H of
