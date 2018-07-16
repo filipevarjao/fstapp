@@ -25,13 +25,14 @@ metrics_test(_Config) ->
                         {disk, _} = lists:keyfind(disk, 1, Metrics)
 	after
 		10000 ->
-			ct:fail("Metrics are not received or handler did not send a message.")
+			ct:fail("Metrics aren't received or handler didn't send a message.")
         end.
 
 
 frequency_test(_Config) ->
 
-        ct:log(start, "The server start by collecting metrics with frequency value as 5ms~n"),
+        ct:log(start,
+        "The server start by collecting metrics with frequency value as 5ms~n"),
         CurrentFreq = 5000, % It represents the time in milliseconds.
         CurrentFreq = fstapp:get_current_frequency(),
 

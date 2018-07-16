@@ -17,7 +17,8 @@
 
 handle_init() ->
 	_ =  mnesia:create_schema([node()]),
-	_ = mnesia:create_table(metrics,[{attributes, record_info(fields, metrics)}]),
+	_ = mnesia:create_table(metrics,[{attributes, record_info(fields,
+															  metrics)}]),
 	{ok, nostate}.
 
 handle_data(Metrics, State) ->
@@ -31,7 +32,8 @@ insert_data(Metrics) ->
 	{proc, Proc} = lists:keyfind(proc, 1, Metrics),
 	{total_memory, TotalM} = lists:keyfind(total_memory, 1, Metrics),
 	{free_memory, FreeM} = lists:keyfind(free_memory, 1, Metrics),
-	{system_total_memory, SystemTM} = lists:keyfind(system_total_memory, 1, Metrics),
+	{system_total_memory, SystemTM} = lists:keyfind(system_total_memory, 1,
+													Metrics),
 	Fun = fun() ->
 		mnesia:write(
 		#metrics{id=erlang:system_time(),

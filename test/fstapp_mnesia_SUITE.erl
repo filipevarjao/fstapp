@@ -22,4 +22,5 @@ all() -> [mnesia_test].
 mnesia_test(_Config) ->
 
 	timer:sleep(1000),
-	{atomic, [_LastMetStored|_Tail]} = mnesia:transaction(fun() -> qlc:eval( qlc:q([ X || X <- mnesia:table(metrics) ])) end).	
+	{atomic, [_LastMetStored|_Tail]} = mnesia:transaction(
+		fun() -> qlc:eval( qlc:q([ X || X <- mnesia:table(metrics) ])) end).	

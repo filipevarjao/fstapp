@@ -75,7 +75,8 @@ handle_cast(_Msg, State) ->
 %% @hidden
 handle_info(collect_metrics, State) ->
 	Module = State#state.callback_module,
-	{ok, InternalState} = Module:handle_data(metrics(), State#state.internal_state),
+	{ok, InternalState} = Module:handle_data(metrics(),
+											 State#state.internal_state),
 	erlang:cancel_timer(State#state.timer_ref),
 	TimerRef = erlang:send_after(State#state.freq, self(), collect_metrics),
 	NewState = State#state{timer_ref=TimerRef, internal_state=InternalState},
@@ -100,4 +101,5 @@ metrics() ->
 	CpuUtil = cpu_sup:util(),
 	MemDataList = memsup:get_system_memory_data(),
 	DiskUsed = disksup:get_almost_full_threshold(),
-	[{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++ MemDataList.
+	[{ostype, OsType},{proc, ProcessCount},{cpu,CpuUtil},{disk, DiskUsed}] ++
+																	MemDataList.

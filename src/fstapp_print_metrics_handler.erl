@@ -17,7 +17,8 @@ print_data([H|T]) ->	case H of
 		{disk, Value} ->
 			io:format("Percentage of disk space utilization ~p%~n", [Value]);
 		{proc, Value} ->
-			io:format("Number of processes running on this machine: ~p~n", [Value]);
+			io:format("Number of processes running on this machine: ~p~n",
+					  [Value]);
 		{Tag, Value} ->
 			io:format("~p total of memory for ~p~n", [Value, Tag])
 	end,
