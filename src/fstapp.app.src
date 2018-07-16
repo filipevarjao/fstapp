@@ -6,7 +6,8 @@
   {applications,
    [kernel,
     stdlib,
-    os_mon
+    os_mon,
+    mnesia
    ]},
   {env,[]},
   {modules, []},
